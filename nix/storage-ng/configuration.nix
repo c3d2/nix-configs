@@ -50,10 +50,10 @@
        address = "172.22.99.1";
        interface = "ens18";
     };
-    defaultGateway6 = {
-      address = "fe80::a800:42ff:fe7a:3246";
-      interface = "ens18";
-    };
+    #defaultGateway6 = {
+    #  address = "fe80::a800:42ff:fe7a:3246";
+    #  interface = "ens18";
+    #};
   };
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -134,11 +134,18 @@
     enable = true;
     virtualHosts = {
       "storage-ng.hq.c3d2.de" = {
-        root = "/mnt/cephfs/c3d2/files";
+        root = "/etc/nixos/www";
         serverAliases = [ "storage" "storage2" "storageng" ];
         http2 = true;
         # addSSL = true;
-
+        locations = {
+          "/c3d2" = {
+            alias = "/mnt/cephfs/c3d2/files/";
+            extraConfig = ''
+              autoindex on;
+            '';
+          };
+        };
       };
     };
   };
