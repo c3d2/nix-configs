@@ -91,7 +91,7 @@
       enable = true;
       enableNmbd = true;
       shares = { 
-      xpool = {
+      c3d2 = {
         browseable = "yes";
               comment = "Public samba share.";
               # guest ok = "yes";
