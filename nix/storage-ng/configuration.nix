@@ -132,6 +132,11 @@
 
   services.nginx = {
     enable = true;
+
+    package = pkgs.nginx.override {
+      modules = with pkgs.nginxModules; [ fancyindex ];
+    };
+
     virtualHosts = {
       "storage-ng.hq.c3d2.de" = {
         root = "/etc/nixos/www";
@@ -142,7 +147,8 @@
           "/c3d2" = {
             alias = "/mnt/cephfs/c3d2/files/";
             extraConfig = ''
-              autoindex on;
+              fancyindex on;
+              # autoindex on;
             '';
           };
         };
