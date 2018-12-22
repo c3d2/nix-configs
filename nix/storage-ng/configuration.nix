@@ -80,6 +80,9 @@
      psmisc
      gitAndTools.git-annex
      gitAndTools.git
+
+     mpv
+     # libmagic how ?
   ];
 
   services.ceph = {
