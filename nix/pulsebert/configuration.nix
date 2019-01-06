@@ -39,6 +39,7 @@
     splix
     # utilities
     nix-index
+    usbutils
     tmux
     vim
   ];
@@ -54,7 +55,9 @@
   services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [
+    4713 # PulseAudio
+  ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
@@ -65,6 +68,18 @@
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
+  # PulseAudio as-a-Service
+  hardware.pulseaudio.systemWide = true;
+  hardware.pulseaudio.tcp.anonymousClients.allowedIpRanges = [ "172.22.99.0/24" "127.0.0.0/8" "::1/128" ];
+  hardware.pulseaudio.tcp.enable = true;
+  hardware.pulseaudio.zeroconf.publish.enable = true;
+
+  # tell Avahi to publish CUPS and PulseAudio
+  services.avahi = {
+    enable = true;
+    publish.enable = true;
+    publish.userServices = true;
+  };
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
@@ -80,6 +95,7 @@
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users."k-ot" = {
+    extraGroups = ["audio"]; # allow k-ot to use PulseAudio
     isNormalUser = true;
     uid = 1000;
   };
