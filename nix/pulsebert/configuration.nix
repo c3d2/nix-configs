@@ -42,6 +42,13 @@
     usbutils
     tmux
     vim
+    git
+    # NCurses Music Player Client (Plus Plus)
+    # a commandline front-end client for mpd
+    # 2019-01-21 mag vater gern gleich einen schoenen lokalen Verwaltung fuer MPD haben.
+#    ncmpcpp
+    home-manager
+    mumble
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -54,9 +61,14 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  # X11 Forwarding for mumble...
+  programs.ssh.forwardX11 = true;
+  services.openssh.forwardX11 = true;
+
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [
     4713 # PulseAudio
+    631 # cups
   ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
@@ -70,9 +82,15 @@
   hardware.pulseaudio.enable = true;
   # PulseAudio as-a-Service
   hardware.pulseaudio.systemWide = true;
-  hardware.pulseaudio.tcp.anonymousClients.allowedIpRanges = [ "172.22.99.0/24" "127.0.0.0/8" "::1/128" ];
+  hardware.pulseaudio.tcp.anonymousClients.allowedIpRanges = [
+    "127.0.0.0/8" "::1/128"
+    "172.22.99.0/24" "2a02:8106:208:5201:58::/64"
+  ];
   hardware.pulseaudio.tcp.enable = true;
   hardware.pulseaudio.zeroconf.publish.enable = true;
+  # vater hoerte, dass menschen im space gern mpd fuer das abspielen von musik erwarten wuerden
+  ####	https://nixos.org/nixos/options.html#services.mpd.enable
+  services.mpd.enable=true;
 
   # tell Avahi to publish CUPS and PulseAudio
   services.avahi = {
@@ -93,9 +111,14 @@
   # services.xserver.displayManager.sddm.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
 
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = false;
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users."k-ot" = {
-    extraGroups = ["audio"]; # allow k-ot to use PulseAudio
+    extraGroups = ["audio" "wheel"]; # allow k-ot to use PulseAudio
     isNormalUser = true;
     uid = 1000;
   };
