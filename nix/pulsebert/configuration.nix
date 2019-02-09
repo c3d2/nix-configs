@@ -69,6 +69,8 @@
   networking.firewall.allowedTCPPorts = [
     4713 # PulseAudio
     631 # cups
+    80 # Web/ympd
+    6600 # mpd
   ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
@@ -88,9 +90,6 @@
   ];
   hardware.pulseaudio.tcp.enable = true;
   hardware.pulseaudio.zeroconf.publish.enable = true;
-  # vater hoerte, dass menschen im space gern mpd fuer das abspielen von musik erwarten wuerden
-  ####	https://nixos.org/nixos/options.html#services.mpd.enable
-  services.mpd.enable=true;
 
   # tell Avahi to publish CUPS and PulseAudio
   services.avahi = {
@@ -129,4 +128,36 @@
   # should.
   system.stateVersion = "18.09"; # Did you read the comment?
 
+
+  # vater hoerte, dass menschen im space gern mpd fuer das abspielen von musik erwarten wuerden
+  ####	https://nixos.org/nixos/options.html#services.mpd.enable
+  services.mpd = { 
+    enable=true;
+    network.listenAddress="any";
+    musicDirectory = "/mnt/storage/Music";
+    extraConfig = ''
+	audio_output {
+		type "pulse"
+		name "/proc"
+	}
+
+	audio_output {
+		type "pulse"
+		name "SDK"
+		server "dacbert.hq.c3d2.de"
+	}
+	'';
+  };
+
+ fileSystems."/mnt/storage" = {
+    device = "storage.hq.c3d2.de:/mnt/zroot/storage/rpool";
+    fsType = "nfs";
+  };
+
+  # MPD music playing daemon with webinterface
+  services.ympd = {
+    enable = true;
+    webPort = "80";
+  };
+  
 }
