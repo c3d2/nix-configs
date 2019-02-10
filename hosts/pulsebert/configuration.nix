@@ -148,6 +148,16 @@
 	}
 	'';
   };
+  services.caddy = {
+    enable = true;
+    agree = true;
+    # TODO: add auth?
+    config = ''
+        mpd.hq.c3d2.de
+        proxy / localhost:8080
+    '';
+  };
+
 
  fileSystems."/mnt/storage" = {
     device = "storage.hq.c3d2.de:/mnt/zroot/storage/rpool";
@@ -157,7 +167,7 @@
   # MPD music playing daemon with webinterface
   services.ympd = {
     enable = true;
-    webPort = "80";
+    webPort = "8080";
   };
   
 }
