@@ -69,7 +69,7 @@
   networking.firewall.allowedTCPPorts = [
     4713 # PulseAudio
     631 # cups
-    80 # Web/ympd
+    80 443 # Web/ympd
     6600 # mpd
   ];
   # networking.firewall.allowedUDPPorts = [ ... ];
