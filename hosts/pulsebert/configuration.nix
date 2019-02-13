@@ -133,9 +133,14 @@
   ####	https://nixos.org/nixos/options.html#services.mpd.enable
   services.mpd = { 
     enable=true;
-    network.listenAddress="any";
+####	(gescheiterter) Versuch q&d einfach die datei (database) einzuhaengen (statt mit proxy fuer database)
+####    dbFile = "/mnt/service-data/mpd_index/database";
+    network.listenAddress = "any";
     musicDirectory = "/mnt/storage/Music";
+####    musicDirectory = "nfs://storage.hq.c3d2.de:/mnt/zroot/storage/rpool/Music";
     extraConfig = ''
+####	music_directory "nfs://storage.hq.c3d2.de:/mnt/zroot/storage/rpool/Music"
+####
 	audio_output {
 		type "pulse"
 		name "/proc"
@@ -146,8 +151,26 @@
 		name "SDK"
 		server "dacbert.hq.c3d2.de"
 	}
+
+####	mpd startet bei der option nicht mehr
+####	database {
+####		plugin "proxy"
+		####	vater was here!
+		####	jail (auf storage)
+		####	externe erstellung der datenbank von mpd in der naehe der ablage der daten
+####		host "172.22.99.98"
+####	}
+
+####	ausschalten der automatischen aktualisierung der datenbank von mpd
+####	angeblich gibt es 2019-02-13 probleme, die zum absturz vom dienst mpd fuehren
+####	wenn das problem behoben ist, dann kann die option wieder entfernt werden
+	auto_update "no"
 	'';
   };
+
+  # mpd likes to crash a lot while indexing, so...
+  systemd.services.mpd.serviceConfig.Restart="on-failure";
+
   services.caddy = {
     enable = true;
     agree = true;
@@ -159,8 +182,14 @@
   };
 
 
- fileSystems."/mnt/storage" = {
+  fileSystems."/mnt/storage" = {
     device = "storage.hq.c3d2.de:/mnt/zroot/storage/rpool";
+    fsType = "nfs";
+  };
+
+####	nur zum spielen mit dem bereitstellen von einer per nfs angebundenen datei als datenbank fuer mpd
+  fileSystems."/mnt/service-data/mpd_index" = {
+    device = "storage.hq.c3d2.de:/mnt/zroot/iocage/jails/mpd_index/root/var/mpd/.mpd";
     fsType = "nfs";
   };
 
