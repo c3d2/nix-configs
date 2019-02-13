@@ -4,7 +4,10 @@
 
 { config, pkgs, ... }:
 
-{
+let
+  ympdPort = 8080;
+  mpdVhost = "mpd.hq.c3d2.de";
+in {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -176,8 +179,13 @@
     agree = true;
     # TODO: add auth?
     config = ''
-        mpd.hq.c3d2.de
-        proxy / localhost:8080
+        ${mpdVhost} {
+          proxy / localhost:${toString ympdPort}
+        }
+
+        :80 {
+          redir https://${mpdVhost}{uri}
+        }
     '';
   };
 
@@ -196,7 +204,7 @@
   # MPD music playing daemon with webinterface
   services.ympd = {
     enable = true;
-    webPort = "8080";
+    webPort = toString ympdPort;
   };
   
 }
