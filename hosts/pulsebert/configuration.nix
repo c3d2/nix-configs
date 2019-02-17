@@ -46,6 +46,7 @@ in {
     tmux
     vim
     git
+    openssl
     # NCurses Music Player Client (Plus Plus)
     # a commandline front-end client for mpd
     # 2019-01-21 mag vater gern gleich einen schoenen lokalen Verwaltung fuer MPD haben.
@@ -75,12 +76,62 @@ in {
     80 443 # Web/ympd
     6600 # mpd
   ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
+  networking.firewall.allowedUDPPorts = [
+    631
+  ];
+  networking.firewall.extraCommands = ''
+        iptables -I INPUT -p udp --dport mdns -d 224.0.0.251 -j ACCEPT   # zeroconf
+        iptables -I OUTPUT -p udp --dport mdns -d 224.0.0.251 -j ACCEPT  # zeroconf
+  '';  # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  services.printing = {
+    enable = true;
+    browsing = true;
+    listenAddresses = [ "*:631" ];
+    defaultShared = true;
+    # logLevel = "debug";
+    drivers = [ pkgs.gutenprint pkgs.hplip pkgs.splix ];
+    extraConf =
+      ''
+        DefaultAuthType Basic
+        <Location />
+          Order allow,deny
+          Allow ALL
+        </Location>
+        <Location /admin>
+          Order allow,deny
+          Allow ALL
+        </Location>
+        <Location /admin/conf>
+          AuthType Basic
+          Require user @SYSTEM
+          Order allow,deny
+          Allow ALL
+        </Location>
+        <Policy default>
+          <Limit Send-Document Send-URI Hold-Job Release-Job Restart-Job Purge-Jobs Set-Job-Attributes Create-Job-Subscription Renew-Subscription Cancel-Subscription Get-Notifications Reprocess-Job Cancel-Current-Job Suspend-Current-Job Resume-Job CUPS-Move-Job>
+            Require user @OWNER @SYSTEM
+            Order deny,allow
+          </Limit>
+          <Limit Pause-Printer Resume-Printer Set-Printer-Attributes Enable-Printer Disable-Printer Pause-Printer-After-Current-Job Hold-New-Jobs Release-Held-New-Jobs Deactivate-Printer Activate-Printer Restart-Printer Shutdown-Printer Startup-Printer Promote-Job Schedule-Job-After CUPS-Add-Printer CUPS-Delete-Printer CUPS-Add-Class CUPS-Delete-Class CUPS-Accept-Jobs CUPS-Reject-Jobs CUPS-Set-Default>
+            AuthType Basic
+            Require user @SYSTEM
+            Order deny,allow
+          </Limit>
+          <Limit Cancel-Job CUPS-Authenticate-Job>
+            Require user @OWNER @SYSTEM
+            Order deny,allow
+          </Limit>
+          <Limit All>
+            Order deny,allow
+          </Limit>
+        </Policy>
+      '';
+
+  };
 
   # Enable sound.
   sound.enable = true;
