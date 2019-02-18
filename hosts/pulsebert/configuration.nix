@@ -187,8 +187,7 @@ in {
   ####	https://nixos.org/nixos/options.html#services.mpd.enable
   services.mpd = { 
     enable=true;
-####	(gescheiterter) Versuch q&d einfach die datei (database) einzuhaengen (statt mit proxy fuer database)
-####    dbFile = "/mnt/service-data/mpd_index/database";
+    dbFile = null;
     network.listenAddress = "any";
     musicDirectory = "/mnt/storage/Music";
 ####    musicDirectory = "nfs://storage.hq.c3d2.de:/mnt/zroot/storage/rpool/Music";
@@ -207,13 +206,13 @@ in {
 	}
 
 ####	mpd startet bei der option nicht mehr
-####	database {
-####		plugin "proxy"
-		####	vater was here!
-		####	jail (auf storage)
-		####	externe erstellung der datenbank von mpd in der naehe der ablage der daten
-####		host "172.22.99.98"
-####	}
+	database {
+		plugin "proxy"
+    	####	vater was here!
+    	####	jail (auf storage)
+    	####	externe erstellung der datenbank von mpd in der naehe der ablage der daten
+		host "172.22.99.98"
+	}
 
 ####	ausschalten der automatischen aktualisierung der datenbank von mpd
 ####	angeblich gibt es 2019-02-13 probleme, die zum absturz vom dienst mpd fuehren
