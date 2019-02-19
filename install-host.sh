@@ -19,3 +19,7 @@ done
 sudo ln -s $HOME/$REPO/hosts/`hostname -s`/configuration.nix /etc/nixos/configuration.nix
 ls -l /etc/nixos/configuration.nix
 
+if [ -f $REPO/hosts/`hostname -s`/home.nix ]; then
+	mkdir -p ~/.config/nixpkgs
+	ln -s $HOME/$REPO/hosts/`hostname -s`/home.nix ~/.config/nixpkgs/home.nix
+fi
