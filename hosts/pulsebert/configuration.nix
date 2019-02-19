@@ -256,5 +256,15 @@ in {
     enable = true;
     webPort = toString ympdPort;
   };
+  nixpkgs.config.packageOverrides = pkgs: with pkgs; {
+    ympd = ympd.overrideAttrs (oldAttrs: {
+      src = fetchFromGitHub {
+        owner = "c3d2";
+        repo = "ympd";
+        rev = "feature/somafm_browser";
+        sha256 = "1a1m3lhyhm3xmi59pamfpwias31bl2jwqd71qxs4d0vzplpd7rml";
+      };
+    });
+  };
   
 }
