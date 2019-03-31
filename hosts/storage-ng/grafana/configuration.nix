@@ -2,47 +2,19 @@
 
 {
   imports =
-    [ <nixpkgs/nixos/modules/profiles/minimal.nix>
+    [ ../../../lib/lxc-container.nix
+      ../../../lib/shared.nix
     ];
-  nix.useSandbox = false;
-  nix.maxJobs = lib.mkDefault 2;
-  nix.buildCores = lib.mkDefault 16;
-
-  boot.isContainer = true;
-  # /sbin/init
-  boot.loader.initScript.enable = true;
-  boot.loader.grub.enable = false;
-
-  fileSystems."/" = { fsType = "rootfs"; device = "rootfs"; };
 
   networking.hostName = "grafana";
   networking.useNetworkd = true;
   networking.defaultGateway = "172.22.99.4";
-
-  # Set your time zone.
-  time.timeZone = "Europe/Berlin";
-  # Select internationalisation properties.
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-    supportedLocales = lib.mkForce [ "en_US.UTF-8/UTF-8" ];
-  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim
   ];
-
-  # Create a few files early before packing tarball for Proxmox
-  # architecture/OS detection.
-  system.extraSystemBuilderCmds = 
-      ''
-          mkdir -m 0755 -p $out/bin
-          ln -s ${pkgs.bash}/bin/bash $out/bin/sh
-          mkdir -m 0755 -p $out/sbin
-          ln -s ../init $out/sbin/init
-      '';
-
 
   # http https
   networking.firewall.allowedTCPPorts = [ 80 443 ];
