@@ -27,4 +27,5 @@
 
   # Required for remote deployment
   services.openssh.enable = true;
+  users.users.root.openssh.authorizedKeys.keys = (import ../secrets/lib/authorized_keys).admins;
 }
