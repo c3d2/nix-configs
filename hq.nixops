@@ -1,0 +1,21 @@
+{
+  network.description = "C3D2 HQ";
+
+  "grafana" =
+    { ... }:
+    {
+      imports = [
+        hosts/storage-ng/grafana/configuration.nix
+      ];
+      deployment.targetHost = "grafana.hq.c3d2.de";
+    };
+
+  "dhcp" =
+    { ... }:
+    {
+      imports = [
+        hosts/storage-ng/dhcp/configuration.nix
+      ];
+      deployment.targetHost = "2a02:8106:208:5201:3801:15ff:fe95:8988";
+    };
+}
