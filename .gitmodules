@@ -1,3 +1,0 @@
-[submodule "secrets"]
-	path = secrets
-	url = ssh://git@gitea.c3d2.de:2222/c3d2-admins/secrets.git
