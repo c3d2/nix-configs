@@ -3,6 +3,7 @@
 {
   imports =
     [ <nixpkgs/nixos/modules/profiles/minimal.nix>
+      <nixpkgs/nixos/modules/profiles/docker-container.nix>
     ];
   nix.useSandbox = false;
   nix.maxJobs = lib.mkDefault 1;

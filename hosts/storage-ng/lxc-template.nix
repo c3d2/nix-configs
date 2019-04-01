@@ -6,46 +6,18 @@
 
 {
   imports =
-    [ <nixpkgs/nixos/modules/profiles/minimal.nix>
+    [ ../../lib/lxc-container.nix
+      ../../lib/shared.nix
     ];
-  nix.useSandbox = false;
-  nix.maxJobs = lib.mkDefault 4;
-
-  boot.isContainer = true;
-  # /sbin/init
-  boot.loader.initScript.enable = true;
-  boot.loader.grub.enable = false;
-  #boot.supportedFilesystems = ["zfs" "ext2" "ext3" "vfat" "fat32" "bcache" "bcachefs"];
-
-  fileSystems."/" = { fsType = "rootfs"; device = "rootfs"; };
 
   networking.hostName = "nixbert"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.useNetworkd = true;
-
-  # Set your time zone.
-  time.timeZone = "Europe/Berlin";
-  # Select internationalisation properties.
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-    supportedLocales = lib.mkForce [ "en_US.UTF-8/UTF-8" ];
-  };
+  networking.useNetworkd = false;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     wget vim
   ];
-
-  # Create a few files early before packing tarball for Proxmox
-  # architecture/OS detection.
-  system.extraSystemBuilderCmds = 
-      ''
-          mkdir -m 0755 -p $out/bin
-          ln -s ${pkgs.bash}/bin/bash $out/bin/sh
-          mkdir -m 0755 -p $out/sbin
-          ln -s ../init $out/sbin/init
-      '';
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
